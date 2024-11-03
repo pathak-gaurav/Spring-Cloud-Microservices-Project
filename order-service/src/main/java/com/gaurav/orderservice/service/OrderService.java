@@ -1,8 +1,8 @@
 package com.gaurav.orderservice.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gaurav.orderservice.entity.Orders;
+import com.gaurav.orderservice.dto.OrderConfirmation;
 import com.gaurav.orderservice.entity.OrderStatus;
+import com.gaurav.orderservice.entity.Orders;
 import com.gaurav.orderservice.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void placeOrder(Long productId, Long userId, int quantity, BigDecimal pricePerUnit)  {
+    public void placeOrder(Long productId, Long userId, int quantity, BigDecimal pricePerUnit) {
         Orders ordersToPlace = Orders.builder()
                 .orderStatus(OrderStatus.PENDING)
                 .productId(productId)
@@ -35,5 +35,11 @@ public class OrderService {
         if (ordersPersisted != null) {
             orderProducerService.publishOrderProducer(ordersPersisted);
         }
+    }
+
+    @Transactional
+    public void updateOrder(OrderConfirmation orderConfirmation) {
+        Orders orders = orderRepository.findById(orderConfirmation.getOrderId()).orElse(null);
+        orders.setOrderStatus(orderConfirmation.getStatus());
     }
 }

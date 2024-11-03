@@ -17,7 +17,22 @@ spring:
       settings:
         web-allow-others: true
       path: /h2-console
+  kafka:
+    consumer:
+      group-id: order-service-id
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      ObjectMapper.writeValueAsString in below JSON format
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+#        Any Source
+        spring.json.trusted.packages: "*"
+#        Below is because we are expecting the Kafka Listener to receive the input parameter as below Class:  com.gaurav.orderservice.dto.OrderConfirmation
+        spring.json.value.default.type: com.gaurav.orderservice.dto.OrderConfirmation
+    bootstrap-servers: localhost:9092
 
+kafka:
+  topic:
+    name: order-producer
 
 server:
   port: 8081
@@ -35,11 +50,5 @@ jwt:
 
 
 
-kafka:
-  bootstrap-servers: localhost:9092
-  producer:
-    key-serializer: org.apache.kafka.common.serialization.StringSerializer
-    value-serializer: org.apache.kafka.common.serialization.StringSerializer
-  topic:
-    name: order-producer
+
 
