@@ -40,7 +40,8 @@ eureka:
     register-with-eureka: true
   service-url: http://localhost:8761/eureka/
   instance:
-    ip-address: true
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
 
 jwt:
   secret: ZmQ0ZGI5NjQ0MDQwY2I4MjMxY2Y3ZmI3MjdhN2ZmMjNhODViOTg1ZGE0NTBjMGM4NDA5NzYxMjdjOWMwYWRmZTBlZjlhNGY3ZTg4Y2U3YTE1ODVkZDU5Y2Y3OGYwZWE1NzUzNWQ2YjFjZDc0NGMxZWU2MmQ3MjY1NzJmNTE0MzI=
