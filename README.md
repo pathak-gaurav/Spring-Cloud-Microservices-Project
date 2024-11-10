@@ -49,77 +49,82 @@ Each of these services communicates via REST APIs with added security, resilienc
 
 ## UML Diagram
 
-```plantuml
-@startuml
+```mermaid
+classDiagram
+    %% Product Service
+    namespace ProductService {
+        class Product {
+            +Long id
+            +String name
+            +int stock
+            +BigDecimal price
+        }
+        class ProductRepository {
+            +save(Product product)
+            +findById(Long id) Product
+            +findAll() List~Product~
+        }
+    }
 
-package ProductService {
-  class Product {
-    +Long id
-    +String name
-    +int stock
-    +BigDecimal price
-  }
+    %% Order Service
+    namespace OrderService {
+        class Order {
+            +Long id
+            +Long productId
+            +Long userId
+            +int quantity
+            +BigDecimal totalPrice
+            +OrderStatus status
+        }
+        class OrderStatus {
+            <<enumeration>>
+            PENDING
+            COMPLETED
+            CANCELED
+        }
+        class OrderRepository {
+            +save(Order order)
+            +findById(Long id) Order
+            +findAll() List~Order~
+        }
+    }
 
-  class ProductRepository {
-    +save(Product product)
-    +findById(Long id): Product
-    +findAll(): List<Product>
-  }
-}
+    %% User Service
+    namespace UserService {
+        class User {
+            +Long id
+            +String username
+            +String password
+            +String email
+        }
+        class UserRepository {
+            +save(User user)
+            +findById(Long id) User
+            +findByUsername(String username) User
+        }
+        class AuthToken {
+            +String token
+            +Long userId
+            +Date expiryDate
+        }
+        class AuthTokenRepository {
+            +save(AuthToken token)
+            +findByUserId(Long userId) AuthToken
+        }
+    }
 
-package OrderService {
-  class Order {
-    +Long id
-    +Long productId
-    +Long userId
-    +int quantity
-    +BigDecimal totalPrice
-    +OrderStatus status
-  }
-
-  enum OrderStatus {
-    PENDING
-    COMPLETED
-    CANCELED
-  }
-
-  class OrderRepository {
-    +save(Order order)
-    +findById(Long id): Order
-    +findAll(): List<Order>
-  }
-}
-
-package UserService {
-  class User {
-    +Long id
-    +String username
-    +String password
-    +String email
-  }
-
-  class UserRepository {
-    +save(User user)
-    +findById(Long id): User
-    +findByUsername(String username): User
-  }
-
-  class AuthToken {
-    +String token
-    +Long userId
-    +Date expiryDate
-  }
-
-  class AuthTokenRepository {
-    +save(AuthToken token)
-    +findByUserId(Long userId): AuthToken
-  }
-}
-
-ProductService.Product --> OrderService.Order : "Places Order"
-OrderService.Order --> UserService.User : "Created by"
-UserService.User --> UserService.AuthToken : "Authorized with JWT"
-@enduml
+    %% Relationships
+    Product --> Order : Places Order
+    Order --> User : Created by
+    User --> AuthToken : Authorized with JWT
+    
+    %% Repository relationships
+    Product --> ProductRepository : managed by
+    Order --> OrderRepository : managed by
+    User --> UserRepository : managed by
+    AuthToken --> AuthTokenRepository : managed by
+    
+    Order --> OrderStatus : has status
 ```
 
 ## Sequence Diagram
